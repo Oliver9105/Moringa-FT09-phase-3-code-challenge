@@ -1,29 +1,35 @@
 import sqlite3
-from models.author import Author
-from models.magazine import Magazine
-from models.article import Article
-from database.connection import get_db_connection
 
 def create_tables():
-    conn = get_db_connection()
+    conn = sqlite3.connect('database/magazine.db')
+    cursor = conn.cursor()
 
-    # Create the necessary tables
-    conn.execute('''CREATE TABLE IF NOT EXISTS authors (
-        id INTEGER PRIMARY KEY,
-        name TEXT)''')
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS authors (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL
+    )
+    ''')
 
-    conn.execute('''CREATE TABLE IF NOT EXISTS magazines (
-        id INTEGER PRIMARY KEY,
-        name TEXT,
-        category TEXT)''')
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS magazines (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        category TEXT NOT NULL
+    )
+    ''')
 
-    conn.execute('''CREATE TABLE IF NOT EXISTS articles (
-        id INTEGER PRIMARY KEY,
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS articles (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        title TEXT NOT NULL,
+        content TEXT,
         author_id INTEGER,
         magazine_id INTEGER,
-        title TEXT,
         FOREIGN KEY (author_id) REFERENCES authors(id),
-        FOREIGN KEY (magazine_id) REFERENCES magazines(id))''')
+        FOREIGN KEY (magazine_id) REFERENCES magazines(id)
+    )
+    ''')
 
     conn.commit()
     conn.close()
